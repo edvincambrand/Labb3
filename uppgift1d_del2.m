@@ -17,13 +17,12 @@
 
 % ----- Systemet ------
 
-% Svårt att skriva ut hela systemet i matlab. Vi kan dock ange systemets
-% jakobian:
+% Svårt att skriva ut hela systemet i matlab. 
+% Vi kan dock ange systemets jakobian:
 
 % J_11 = 1   J_12 = 0   J_13 = -h/2   J_14 = 0
 % J_21 = 0   J_22 = 1   J_23 = 0   J_24 = -h/2
 
-% Nästa rader är värre. 
 % Definiera Q1 = [q1(n+1)+q1(n)]/2, Q2 = [q2(n+1)+q2(n)]/2
 
 % J_31 = - h * [Q1^2 - Q2^2/2]/[Q1^2 + Q2^2]^{5/2}
@@ -39,7 +38,7 @@ clear;
 
 % parametrar
 a = 0.5; 
-N = 10000; % antal delintervall
+N = 1000; % antal delintervall
 T = 100; % slutpunkt
 h = T/N; % steglängd
 
@@ -52,7 +51,7 @@ maxiter = 20;
 tol = 1e-5;
 for i = 1:N
 
-    % Vi börjar varje steg med att lösa system = 0.
+    % Vid varje steg ska vi lösa: system = 0.
     % Vi gör startgissning y(n+1)=y(n) 
 
     v = [q1(i); q2(i); p1(i); p2(i)]; % Startgissning. Variabel.
