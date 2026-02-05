@@ -1,0 +1,102 @@
+%% Mittpunktsmetoden och symplektisk euler
+
+% Vi tillkallar koden genom mittpunkt.m och symplektiska.m
+
+clear;
+a = 0.5;
+N = 4000;
+T = 100;
+
+[y1, H1] = mittpunkt(a, N, T);
+
+q1_m = y1(:,1);
+q2_m = y1(:,2);
+
+[y2, H2] = symplektiska(a, N, T);
+
+q1_s = y2(:,1);
+q2_s = y2(:,2);
+
+subplot(1,2,1);
+plot(q1, q2);
+xlabel("q1");
+ylabel("q2");
+title("Implicita mittpunktsmetoden")
+xlim([-1.5, .5])
+ylim([-1, 1])
+
+
+
+
+subplot(1,2,2);
+plot(q(1,:), q(2,:))
+xlabel("q1")
+ylabel("q2")
+title("Eulers symplektiska metod")
+xlim([-1.5, .5])
+ylim([-1, 1])
+
+
+%% e)  ENERGIER
+
+figure;
+
+plot(H_imp); hold on; plot(H2)
+legend("H : Mittpunktsmetoden", "H : Eulers symplektiska metod")
+ylabel("H : Energi")
+xlabel("Iteration, i")
+xlim([0,N])
+ylim([-0.55, -0.45])
+
+fprintf("Range (mittpunkt): [%.8f, %.8f] | Range (symplektisk): [%.8f, %.8f] \n", ...
+    min(H_imp),max(H_imp),min(H2),max(H2))
+
+
+
+
+%% Uppgift 3
+
+% Lös keplerproblemet med ODE45. = Referenslösning
+% Jämför Symplektisk/Mittpunkt för olika $h$, både vad gäller bevarande av energi och tillståndet $(q_1,q_2)$ i slutpunkten $t=T$.
+% Vad blir noggrannhetsordningen av Symplektisk/Implicit?
+% Givet tolerans i sluttillståndet (jmf med ode45), vilken metod är mest effektiv?
+% Beror svaret på om du vill ha hög noggrannhet (location wise), eller nöjer du dig med mindre noggrann lösning?
+
+function dydt = odefunc(t, y)
+    dydt = zeros(4,1);
+    dydt(1) = y(3);
+    dydt(2) = y(4);
+    dydt(3) = -y(1)/(y(1)^2+y(2)^2)^(3/2);
+    dydt(4) = -y(2)/(y(1)^2+y(2)^2)^(3/2);
+end
+
+y0 = [1-a, 0, 0, sqrt((1+a)/(1-a))];
+rtol = 1e-7;
+atol = 1e-7;
+options = odeset(RelTol=1e-8, AbsTol=1e-8);
+
+
+
+[t, y] = ode45(@(t,y) odefunc(t,y), tspan, y0, options);
+
+clf;
+
+
+subplot(1,2,1);
+plot(y(:,1), y(:,2)); hold on;
+plot(q(1,:), q(2,:), "--"); plot(q1(:), q2(:), "--")
+
+subplot(1,2,2);
+plot([0, N], [-.5, -.5], "LineWidth",2, "Color","r"); hold on; 
+plot(H_imp); plot(H2)
+
+
+disp("-----------------------------------------")
+fprintf(" N = %.0f, T = %.0f, reltol = 1e%.0f, abstol = 1e%.0f \n " + ...
+    "ODE45: q1_end = %.6f | q2_end = %.6f \n " + ...
+    "Mittpunktsmetoden: q1_end = %.6f | q2_end = %.6f \n " + ...
+    "Symplektisk euler: q1_end = %.6f | q2_end = %.6f \n ", ...
+    N, T, log10(rtol), log10(atol), ...
+    y(end,1), y(end,2), ...
+    q1(end), q2(end), ...
+    q(1,end), q(2,end));
