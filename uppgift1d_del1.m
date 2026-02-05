@@ -1,8 +1,9 @@
 %% Framåt Euler
 
-function w = framat_euler(f, tspan, y0, n)
+function [t,w] = framat_euler(f, tspan, y0, n)
     h = (tspan(2)-tspan(1))/n;
     p = size(y0);
+    t = tspan(1) + h*(0:n);
     w = zeros(p(1), n+1);
     w(:,1) = y0;
 
@@ -19,15 +20,18 @@ y0 = [1-a; 0; 0; sqrt((1+a)/(1-a))];
 n = 100000; 
 f = @(y) [y(3); y(4); -y(1)/((y(1)^2+y(2)^2)^1.5); -y(2)/((y(1)^2+y(2)^2)^1.5)];
 
-y = framat_euler(f,tspan, y0, n);
+[t_fram, y_fram] = framat_euler(f,tspan, y0, n);
 
 %Plottar banorna (q1(t),q2(t))
-q1 = y(1,:);
-q2 = y(2,:);
+q1_fram = y_fram(1,:);
+q2_fram = y_fram(2,:);
 
-plot(q1,q2)
+plot(q1_fram,q2_fram)
 
 grid on
+xlabel("q1")
+ylabel("q2")
+title("framåt Euler")
 
 
 %% Bakåt Euler 
@@ -76,13 +80,40 @@ tspan = [0,50];
 a = 0.5;
 y0 = [1-a; 0; 0; sqrt((1+a)/(1-a))];
 n = 200000; 
-[t,y] = bakat_euler(F,DF,tspan, y0, n);
+[t_bak, y_bak] = bakat_euler(F,DF,tspan, y0, n);
 
 %Plottar banorna (q1(t),q2(t))
-q1 = y(1,:);
-q2 = y(2,:);
+q1_bak = y_bak(1,:);
+q2_bak = y_bak(2,:);
 
-plot(q1,q2)
+plot(q1_bak,q2_bak)
 
 grid on
+xlabel("q1")
+ylabel("q2")
+title("bakåt Euler")
+
+
+%% Energier
+
+H = @(p,q) 0.5*vecnorm(p).^2 - (1./vecnorm(q));
+
+q_fram = y_fram(1:2,:);
+p_fram = y_fram(3:4,:);
+
+q_bak = y_bak(1:2,:);
+p_bak = y_bak(3:4,:);
+
+figure
+plot(t_fram, H(p_fram, q_fram))
+grid on
+xlabel("t")
+ylabel("H")
+
+figure
+plot(t_bak, H(p_bak, q_bak))
+grid on
+xlabel("t")
+ylabel("H")
+
 
