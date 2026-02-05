@@ -39,7 +39,7 @@ clear;
 
 % parametrar
 a = 0.5; 
-N = 10000; % antal delintervall
+N = 6000; % antal delintervall
 T = 100; % slutpunkt
 h = T/N; % steglängd
 
