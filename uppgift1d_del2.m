@@ -38,7 +38,7 @@ clear;
 
 % parametrar
 a = 0.5; 
-N = 1000; % antal delintervall
+N = 4000; % antal delintervall
 T = 100; % slutpunkt
 h = T/N; % steglängd
 
@@ -46,6 +46,8 @@ q1 = zeros(1,N); q1(1) = 1-a;
 q2 = zeros(1,N); q2(1) = 0;
 p1 = zeros(1,N); p1(1) = 0;
 p2 = zeros(1,N); p2(1) = sqrt(1+a)/sqrt(1-a);
+
+H1 = zeros(1,N); % Dokumentera energin för mittpunkt
 
 maxiter = 20;
 tol = 1e-5;
@@ -56,9 +58,10 @@ for i = 1:N
 
     v = [q1(i); q2(i); p1(i); p2(i)]; % Startgissning. Variabel.
     y_i = [q1(i); q2(i); p1(i); p2(i)]; % Konstant.
+    H1(i) = 1/2 * (p1(i)^2+p2(i)^2) - 1/sqrt(q1(i)^2+q2(i)^2);
 
     for j = 1:maxiter
-        
+
         % Ställ upp förenklingar
         Q1 = (q1(i) + v(1))/2;
         Q2 = (q2(i) + v(2))/2;
@@ -134,11 +137,21 @@ ylim([-1, 1])
 q = zeros(2,N); q(1,1) = 1-a; q(2,1) = 0;
 p = zeros(2,N); p(1,1) = 0; p(2,1) = sqrt(1+a)/sqrt(1-a);
 
-for n = 1:N
-    R_q = (q(1,n)^2 + q(2,n)^2)^(3/2);
-    p(:,n+1) = p(:,n) - h * q(:,n) / R_q;
-    q(:,n+1) = q(:,n) + h * p(:,n+1);
+H2 = zeros(1,N); % Dokumentera energin för mittpunkt
+
+
+% Iterera!
+for i = 1:N
+    % Energi:
+    H2(i) = 1/2 * (p(1,i)^2 + p(2,i)^2) - 1/sqrt(q(1,i)^2+q(2,i)^2);
+    %H1(i) = 1/2 * (p1(i)^2 + p2(i)^2) - 1/sqrt(q1(i)^2+q2(i)^2);
+
+    R_q = (q(1,i)^2 + q(2,i)^2)^(3/2); % R = |q|^3
+    p(:,i+1) = p(:,i) - h * q(:,i) / R_q;
+    q(:,i+1) = q(:,i) + h * p(:,i+1);
 end
+
+
 subplot(1,2,2);
 plot(q(1,:), q(2,:))
 xlabel("q1")
@@ -146,3 +159,18 @@ ylabel("q2")
 title("Eulers symplektiska metod")
 xlim([-1.5, .5])
 ylim([-1, 1])
+
+
+%% e)  ENERGIER
+
+figure;
+
+plot(H1); hold on; plot(H2)
+legend("H : Mittpunktsmetoden", "H : Eulers symplektiska metod")
+ylabel("H : Energi")
+xlabel("Iteration, i")
+xlim([0,N])
+ylim([-0.55, -0.45])
+
+fprintf("Range (mittpunkt): [%.8f, %.8f] | Range (symplektisk): [%.8f, %.8f] \n", ...
+    min(H1),max(H1),min(H2),max(H2))
