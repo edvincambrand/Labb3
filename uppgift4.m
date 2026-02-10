@@ -1,0 +1,128 @@
+%%
+clear;
+% Rumsparametrar
+a = 0; b = 1;
+N = 100;
+dx = (b-a)/N;
+c = 1;
+
+% Matrisen
+A = diag(ones(1,N-1)*(-2/dx^2))+...
+    diag(ones(1,N-2)/dx^2, 1)+...
+    diag(ones(1,N-2)/dx^2, -1);
+
+A = sparse(A);
+
+% tidparametrar
+T = 2;
+M = 10000;
+dt = T/M;
+
+% Minne
+q = zeros(N-1, M+1); % motsvarar u-hatt
+p = zeros(N-1, M+1); % motsvarar d u-hatt / dt
+
+% Begynnelsevärden
+g = @(x) exp(-200*(x-0.5)^2); 
+for i = 1:N-1
+    q(i,1) = g(dx*i);
+end
+
+for j = 1:M
+    p(:,j+1) = p(:,j) + dt * c^2*A*q(:,j);
+    q(:,j+1) = q(:,j) + dt * p(:,j+1);
+end
+
+
+% Define your data
+x = (1:N-1)/N;              % Rows correspond to x
+y = (0:M)/M;              % Columns correspond to y
+
+% Create a grid
+[Y, X] = meshgrid(y, x); 
+
+% Plot
+figure;
+surf(X, Y, q,"EdgeColor","texturemap");
+xlabel('Position');
+ylabel('Time');
+zlabel('q : Wave amplitude');
+
+
+
+%%
+
+
+clear;
+L = 1;
+N = 200; % antal intervall
+T = 2; % sluttid
+dx = 1/N; % steglängd i rummet
+dt = dx/2.0; % tidssteg, tänk på stabilitetsvillkoren
+M = round(T/dt); % antal tidsteg
+c = 1; % våghastighet
+
+
+% allokering av minne
+q = zeros(N-1,M+1); % u(n,m) lösningens värde vid tid (m-1)*dt i position n*dx
+p = zeros(N-1,M+1); % p=u'
+A = zeros(N-1,N-1); % Au är differensapproximation av d^2 u/dx^2
+x = dx*(1:N-1)'; % x(n) är n*dx
+E = zeros(1,M+1); % För att beräkna energin i varje tidssteg.
+y = zeros(N-1,M+1); % d-lamberts lösning
+
+%Skapa matrisen A
+A = sparse( ...
+    diag(ones(1,N-1)*(-2)/dx^2)+...
+    diag(ones(1,N-2)/dx^2, 1)+...
+    diag(ones(1,N-2)/dx^2, -1)...
+    );
+
+
+%Sätt begynnelsedata för q, p, E
+g = @(x) exp(-200*(x-0.5).^2);
+for i = 1:N-1
+    q(i,1) = g(x(i));
+end
+% p är noll initialt.
+E(1) = - 1/2 * dot(q(:,1), c^2*A*q(:,1));
+
+
+
+
+% Sätt upp film
+nframe = M+1; % kommando för film
+mov(1:nframe)= struct('cdata',[],'colormap',[]);
+figure;
+plot(x, q(:,1), 'r', 'Linewidth', 1); hold on; %Plot vid tiden t=0.
+axis([0 1 -1 1])
+set(gca, 'nextplot', 'replacechildren')
+drawnow
+mov(1) = getframe(gcf); %Första frame i filmen.
+
+
+for j=1:M
+    % Beräkna energi
+    E(j+1) = 1/2 * dot(p(:,j), p(:,j)) - 1/2 * dot(q(:,j), c^2*A*q(:,j));
+
+    % Beräkna p,q & d-lamberts lösnming y
+    p(:,j+1) = p(:,j) + dt*c^2*A*q(:,j);
+    q(:,j+1) = q(:,j) + dt*p(:,j+1);
+    y(:,j) = 1/2 * g(x-c*dt*j) + 1/2 * g(x+c*dt*j);
+    
+    % Plotta lösningar
+    X = [0;x;L]; U = [0;q(:,j);0]; Y = [0;y(:,j);0];
+    plot(X, U, 'r', 'Linewidth', 2); hold on;
+    plot(X, Y, "g", "LineWidth",1)
+
+    % Skriv ut tidssteg och energi
+    text(0.05,-0.8, sprintf('t=%.2f', dt*j))
+    text(0.05,-0.7, sprintf("E=%.2f", E(j)))
+
+    % Uppdatera bilder (idk these commands, karins kod...)
+    set(gca, 'nextplot', 'replacechildren')
+    drawnow
+    mov(j+1) = getframe(gcf);
+end
+
+figure; plot((1:801)',E);
