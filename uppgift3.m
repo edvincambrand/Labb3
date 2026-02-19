@@ -7,7 +7,7 @@
 % Beror svaret på om du vill ha hög noggrannhet (location wise), eller nöjer du dig med mindre noggrann lösning?
 clear;
 
-% Konstanter & span
+% Parametrar
 a = 0.5;
 N = 4000;
 T = 100;
