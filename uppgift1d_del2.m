@@ -51,3 +51,21 @@ ylim([-0.55, -0.45])
 % Skriv ut energiernas intervallgränser:
 fprintf("Range (mittpunkt): [%.8f, %.8f] | Range (symplektisk): [%.8f, %.8f] \n", ...
     min(H1),max(H1),min(H2),max(H2))
+
+
+%%
+function dydt = odefunc(t, y)
+    dydt = zeros(4,1);
+    dydt(1) = y(3);
+    dydt(2) = y(4);
+    dydt(3) = -y(1)/(y(1)^2+y(2)^2)^(3/2);
+    dydt(4) = -y(2)/(y(1)^2+y(2)^2)^(3/2);
+end
+
+
+y0 = [1-a, 0, 0, sqrt((1+a)/(1-a))];
+tspan = linspace(0,T,N+1);
+options = odeset(AbsTol=1e-9, RelTol=1e-9);
+[t, y] = ode45(@(t,y) odefunc(t,y), tspan, y0, options);
+plot(sqrt(q1_s.^2+q2_s.^2) - sqrt(y(:,1).^2+y(:,2).^2)); hold on; grid on;
+plot(sqrt(q1_m.^2+q2_m.^2) - sqrt(y(:,1).^2+y(:,2).^2));
