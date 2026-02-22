@@ -78,7 +78,7 @@ end
 tspan = [0,100];
 a = 0.5;
 y0 = [1-a; 0; 0; sqrt((1+a)/(1-a))];
-n = 400000; 
+n = 2000000; 
 [t_bak, y_bak] = bakat_euler(F,DF,tspan, y0, n);
 
 %Plottar banorna (q1(t),q2(t))
