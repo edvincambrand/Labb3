@@ -44,13 +44,13 @@ function [t,w] = bakat_euler(F,DF,tspan,y0,n)
     p = size(y0);
     w = zeros(p(1), n+1);
     w(:,1) = y0;
-    %Använder Newtons Metod approximera w_n+1 
+    %Använder Newtons Metod för att approximera w_n+1 
     for i=1:n
         w(:,i+1) = newton(w(:,i),F,DF,h);
     end
 end
 
-%Definierar funktionen F(x)=x-y_i-h*f(y_i), där x = y_i+1     
+%Definierar funktionen F(x)=x-y_i-h*f(x), där x = y_i+1     
 F = @(x,xb,h) [x(1)-xb(1)-h*x(3);
                x(2)-xb(2)-h*x(4);
                x(3)-xb(3)+h*x(1)/(x(1)^2+x(2)^2)^1.5;
@@ -71,12 +71,11 @@ function y = newton(wb,F,DF,h)
         s = - DF(x,h) \ F(x,wb,h);
         x = x + s;
     end
-
     y = x;
 end
 
 %Kallar bakåt Euler
-tspan = [0,50];
+tspan = [0,100];
 a = 0.5;
 y0 = [1-a; 0; 0; sqrt((1+a)/(1-a))];
 n = 200000; 
@@ -109,11 +108,13 @@ plot(t_fram, H(p_fram, q_fram))
 grid on
 xlabel("t")
 ylabel("H")
+title('Framåt Euler')
 
 figure
 plot(t_bak, H(p_bak, q_bak))
 grid on
 xlabel("t")
 ylabel("H")
+title('Bakåt Euler')
 
 
