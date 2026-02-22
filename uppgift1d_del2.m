@@ -23,7 +23,7 @@ q1_s = y2(1,:);
 q2_s = y2(2,:);
 
 % Plotta q1, q2 för mittpunkt:
-subplot(1,2,1);
+subplot(2,2,1);
 plot(q1_m, q2_m); grid on;
 xlabel("q1");
 ylabel("q2");
@@ -32,7 +32,7 @@ xlim([-1.5, .5])
 ylim([-1, 1])
 
 % Plotta q1/q2 för symplektiska:
-subplot(1,2,2);
+subplot(2,2,2);
 plot(q1_s, q2_s); grid on;
 xlabel("q1")
 ylabel("q2")
@@ -41,9 +41,15 @@ xlim([-1.5, .5])
 ylim([-1, 1])
 
 % Plotta energier:
-figure;
-plot(tspan, H1); hold on; plot(tspan, H2); grid on;
-legend("H : Mittpunktsmetoden", "H : Eulers symplektiska metod")
+subplot(2,2,3)
+plot(tspan, H1); grid on; title("Energi implicit mittpunkt");
+ylim([-0.501, -0.499]);
+xlim([0, T])
+ylabel("H : Energi")
+xlabel("Tidpunkt")
+subplot(2,2,4);
+plot(tspan, H2); grid on; title("Energi eulers symplektiska");
+%legend("H : Mittpunktsmetoden", "H : Eulers symplektiska metod")
 ylabel("H : Energi")
 xlabel("Tidpunkt")
 xlim([0, T])

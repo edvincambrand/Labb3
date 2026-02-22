@@ -116,4 +116,8 @@ grid on
 xlabel("t")
 ylabel("H")
 
-
+figure
+subplot(2,2,1); plot(q1_fram, q2_fram); title("q1,q2 Euler fram")
+subplot(2,2,2); plot(q1_bak, q2_bak); title("q1,q2 Euler bak")
+subplot(2,2,3); plot(t_fram, H(p_fram, q_fram)); title("Energi Euler fram")
+subplot(2,2,4); plot(t_bak, H(p_bak, q_bak)); title("Energi Euler bak")
