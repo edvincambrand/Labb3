@@ -1,6 +1,5 @@
 %% ----------- DIRICHLET RV --------------
 
-
 clear;
 L = 1;
 N = 200; % antal intervall
@@ -100,7 +99,7 @@ c = 1; % våghastighet
 % allokering av minne
 q = zeros(N+1, M+1); % q(n,m) lösningens värde vid tid (m-1)*dt i position n*dx
 p = zeros(N+1, M+1); % 
-A = zeros(N+1, N+1); % 
+A = zeros(N+1, N+1); %
 x = dx*(1:N+1)'; % x(n) är n*dx
 E = zeros(1, M+1); % För att beräkna energin i varje tidssteg.
 y = zeros(N+1, M+1); % d-lamberts lösning

@@ -4,7 +4,7 @@ function [y, H] = mittpunkt(a, N, T)
     h = T/N;
     
     % Allokera uttrymme + begynnelsevillkor
-    y = zeros(4,N);
+    y = zeros(4,N+1);
     y(1,1) = 1-a;
     y(2,1) = 0;
     y(3,1) = 0;
@@ -59,9 +59,7 @@ function [y, H] = mittpunkt(a, N, T)
             v = v - s;
         
             if norm(s) < tol
-                if j >= 4
-                    disp(j)
-                end
+
                 y(:,i+1) = v;
                 break
             end

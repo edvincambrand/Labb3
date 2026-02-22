@@ -34,8 +34,6 @@ Nvals = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]; % -> h ha
 
 % Referenslösning
 [t, y] = ode45(@(t,y) odefunc(t,y), tspan, y0, options);
-y = y';
-
 
 Hvals = zeros(length(Nvals), 2);
 E_m = zeros(length(Nvals),1);

@@ -14,12 +14,12 @@ T = 100;
 [y2, H2] = symplektiska(a, N, T);
 
 % Mittpunkt:
-q1_m = y1(:,1);
-q2_m = y1(:,2);
+q1_m = y1(1,:);
+q2_m = y1(2,:);
 
 % Symplektiska:
-q1_s = y2(:,1);
-q2_s = y2(:,2);
+q1_s = y2(1,:);
+q2_s = y2(2,:);
 
 % Plotta q1, q2 för mittpunkt:
 subplot(1,2,1);
