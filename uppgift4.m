@@ -5,17 +5,17 @@ L = 1;
 N = 200; % antal intervall
 T = 2; % sluttid
 dx = 1/N; % steglängd i rummet
-dt = dx/2.0; % tidssteg, tänk på stabilitetsvillkoren
+dt = dx; % tidssteg, tänk på stabilitetsvillkoren
 M = round(T/dt); % antal tidsteg
 c = 1; % våghastighet
 
 
 % allokering av minne
-q = zeros(N-1,M+1); % u(n,m) lösningens värde vid tid (m-1)*dt i position n*dx
-p = zeros(N-1,M+1); % p=u'
-A = zeros(N-1,N-1); % Au är differensapproximation av d^2 u/dx^2
+q = zeros(N-1,M+1); % q(n,m) lösningens värde vid tid (m-1)*dt i position n*dx
+p = zeros(N-1,M+1); % p=q'
+%A = zeros(N-1,N-1); % Au är differensapproximation av d^2 u/dx^2
 x = dx*(1:N-1)'; % x(n) är n*dx
-E = zeros(1,M+1); % För att beräkna energin i varje tidssteg.
+E = zeros(1,M+1); % Energi
 y = zeros(N-1,M+1); % d-lamberts lösning
 
 %Skapa matrisen A
@@ -72,7 +72,7 @@ for j=1:M
     mov(j+1) = getframe(gcf);
 end
 
-figure; plot((1:801)',E);
+figure; plot(E);
 
 
 
@@ -105,18 +105,14 @@ E = zeros(1, M+1); % För att beräkna energin i varje tidssteg.
 y = zeros(N+1, M+1); % d-lamberts lösning
 
 %Skapa matrisen A
-
-% Test: Neumann randvillkor alpha, beta
-alpha = 1;
-beta = 1;
-
 A = sparse( ...
     diag(ones(1,N+1)*(-2)/dx^2)+...
     diag(ones(1,N)/dx^2, 1)+...
     diag(ones(1,N)/dx^2, -1)...
     );
-A(1,2) = 2/dx^2; A(N+1,N) = 2/dx^2;
 
+A(1,2) = 2/dx^2; % u'(x_0)=0
+A(N+1,N) = 2/dx^2; % u'(x_N)=0
 
 
 %Sätt begynnelsedata för q, p, E
@@ -126,8 +122,6 @@ for i = 1:N+1
 end
 % p är noll initialt.
 E(1) = - 1/2 * dot(q(:,1), c^2*A*q(:,1));
-
-
 
 
 % Sätt upp film
@@ -158,7 +152,7 @@ for j=1:M
     % Skriv ut tidssteg och energi
     text(0.05,-0.8, sprintf('t=%.2f', dt*j))
     text(0.05,-0.7, sprintf("E=%.2f", E(j)))
-
+    
     % Uppdatera bilder (idk these commands, karins kod...)
     set(gca, 'nextplot', 'replacechildren')
     drawnow

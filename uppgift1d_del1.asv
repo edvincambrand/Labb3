@@ -105,7 +105,7 @@ q_bak = y_bak(1:2,:);
 p_bak = y_bak(3:4,:);
 
 figure
-plot(t_fram, H(p_fram, q_fram))
+%plot(t_fram, H(p_fram, q_fram))
 grid on
 xlabel("t")
 ylabel("H")
