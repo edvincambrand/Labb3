@@ -8,6 +8,7 @@ clear;
 a = 0.5;
 N = 16000;
 T = 100;
+tspan = linspace(0, T, N+1);
 
 % Ta fram lösningar + energier
 [y1, H1] = mittpunkt(a, N, T);
@@ -41,11 +42,11 @@ ylim([-1, 1])
 
 % Plotta energier:
 figure;
-plot(H1); hold on; plot(H2); grid on;
+plot(tspan, H1); hold on; plot(tspan, H2); grid on;
 legend("H : Mittpunktsmetoden", "H : Eulers symplektiska metod")
 ylabel("H : Energi")
-xlabel("Iteration, i")
-xlim([0,N])
+xlabel("Tidpunkt")
+xlim([0, T])
 ylim([-0.55, -0.45])
 
 % Skriv ut energiernas intervallgränser:
